@@ -17,11 +17,6 @@ from sync_products.connector import Connection
 
 logger = logging.getLogger(__file__)
 
-BASE = "https://localhost"
-DATABASE = "database"
-USER = "user"
-PASSWORD = "password"
-
 def get_code(pathfile: Path):
     name = pathfile.stem
 
