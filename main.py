@@ -77,9 +77,9 @@ class InternalCategory:
 class Product:
     barcode: str
     image_principal: str = None
-    conn = Connection(BASE, DATABASE, USER, PASSWORD)
 
-    def __init__(self, barcode: str):
+    def __init__(self, conn, barcode: str):
+        self.conn = conn
         self.barcode = barcode
         self.image_list = []
 
@@ -88,7 +88,7 @@ class Product:
             return
 
         # Products without image
-        found = conn.execute("product.template",
+        found = self.conn.execute("product.template",
                              "search",
                              [
                                 '|',
@@ -99,7 +99,7 @@ class Product:
                              ])
         if found:
             #categ = InternalCategory(self.image_principal)
-            conn.write("product.template",
+            self.conn.write("product.template",
                          [found[0], {
                              "image_1920": path_to_base64(self.image_principal),
                        #      "categ_id": categ._id
@@ -107,7 +107,7 @@ class Product:
 
         if found and self.image_list:
             for idx, image in enumerate(self.image_list):
-                conn.write("product.template",
+                self.conn.write("product.template",
                              [found[0], {
                                  "product_template_image_ids": [(0,0, {'name': f'image: {idx}', 'image_1920': path_to_base64(image)})]
                                 }])
@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
     productos = dict()
     for code in codes:
-        productos[code] = Product(code)
+        productos[code] = Product(conn, code)
 
     for filepath in files:
         p = productos[get_code(filepath)]
