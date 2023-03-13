@@ -122,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument("-u", "--user", help="odoo user", required=True)
     parser.add_argument("-P", "--password", help="odoo password", required=True)
     parser.add_argument("-d", "--database", help="database name", default="odoo")
-    parser.add_argument("-h", "--host", help="database host", default="http://localhost")
+    parser.add_argument("--host", help="database host", default="http://localhost")
     args = parser.parse_args()
 
     conn = Connection(args.host, args.database, args.user, args.password)
