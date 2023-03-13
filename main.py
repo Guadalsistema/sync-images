@@ -9,10 +9,11 @@ import logging
 import base64
 import re
 
+from pathlib import Path
+
 import pandas as pd
 
 from sync_products.connector import Connection
-from pathlib import Path
 
 logger = logging.getLogger(__file__)
 
@@ -129,7 +130,7 @@ if __name__ == '__main__':
     parser.add_argument("-h", "--host", help="database host", default="http://localhost")
     args = parser.parse_args()
 
-    conn = Connection(BASE, DATABASE, USER, PASSWORD)
+    conn = Connection(args.host, args.database, args.user, args.password)
 
     # Get list of files
     files = list(Path(args.path).rglob('*.jpg')) + list(Path(args.path).rglob('*.JPG'))
