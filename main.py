@@ -118,10 +118,21 @@ class Product:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+                    prog=__file__,
+                    description='What the program does',
+                    epilog='Text at the bottom of help')
+    parser.add_argument("--path", help="images path", required=True)
+    parser.add_argument("-u", "--user", help="odoo user", required=True)
+    parser.add_argument("-P", "--password", help="odoo password", required=True)
+    parser.add_argument("-d", "--database", help="database name", default="odoo")
+    parser.add_argument("-h", "--host", help="database host", default="http://localhost")
+    args = parser.parse_args()
+
     conn = Connection(BASE, DATABASE, USER, PASSWORD)
 
     # Get list of files
-    files = list(Path('/media/usb0/').rglob('*.jpg')) + list(Path('/media/usb0/').rglob('*.JPG'))
+    files = list(Path(args.path).rglob('*.jpg')) + list(Path(args.path).rglob('*.JPG'))
     codes = {code for code in map(lambda pathfile: get_code(pathfile), files)}
 
     productos = dict()
