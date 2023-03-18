@@ -22,9 +22,20 @@ def get_code(pathfile: Path):
 
     group = re.split(r'[_-]+', name)
     if len(group) > 1:
-        group = group[:-1]
+        group = group[0]
 
     return ''.join(group)
+
+
+def get_position(pathfile: Path) -> int:
+    name = pathfile.stem
+
+    group = re.split(r'[_-]+', name)
+    if len(group) == 1:
+        return 0
+    
+    return(group[1])
+
 
 def path_to_base64(image_path):
     with open(image_path, "rb") as img_file:
@@ -135,12 +146,17 @@ if __name__ == '__main__':
     for code in codes:
         productos[code] = Product(conn, code)
 
+    img_list = dict()
     for filepath in files:
         p = productos[get_code(filepath)]
         if not p.image_principal:
             p.image_principal = str(filepath)
         else:
-            p.image_list.append(str(filepath))
+            pos = get_position(filepath)
+            img_list[pos] = filepath
+            keys = [k for k in img_list.keys()].sort()
+            for key in keys:
+                p.image_list.append(str(img_list[key]))
 
     try:
         for product in productos.values():
