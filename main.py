@@ -4,18 +4,15 @@
     work fast, die young
 """
 
-import argparse
-import logging
 import base64
 import re
-
+import sys
 from pathlib import Path
 
-import pandas as pd
+from PyQt6.QtWidgets import QApplication
 
-from sync_products.connector import Connection
+from app.gui.window.main import MainWindow
 
-logger = logging.getLogger(__file__)
 
 def get_code(pathfile: Path):
     name = pathfile.stem
@@ -33,8 +30,8 @@ def get_position(pathfile: Path) -> int:
     group = re.split(r'[_-]+', name)
     if len(group) == 1:
         return 0
-    
-    return(group[1])
+
+    return int(group[1])
 
 
 def path_to_base64(image_path):
@@ -124,45 +121,18 @@ class Product:
                                 }])
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-                    prog=__file__,
-                    description='What the program does',
-                    epilog='Text at the bottom of help')
-    parser.add_argument("--path", help="images path", required=True)
-    parser.add_argument("-u", "--user", help="odoo user", required=True)
-    parser.add_argument("-P", "--password", help="odoo password", required=True)
-    parser.add_argument("-d", "--database", help="database name", default="odoo")
-    parser.add_argument("--host", help="database host", default="http://localhost")
-    args = parser.parse_args()
+__version__ = "0.0.3"
 
-    conn = Connection(args.host, args.database, args.user, args.password)
 
-    # Get list of files
-    files = list(Path(args.path).rglob('*.jpg')) + list(Path(args.path).rglob('*.JPG'))
-    codes = {code for code in map(lambda pathfile: get_code(pathfile), files)}
+if __name__ == "__main__":
+    # Start the app
 
-    productos = dict()
-    for code in codes:
-        productos[code] = Product(conn, code)
+    # necesary
+    app = QApplication(sys.argv)
+    app.setApplicationVersion(__version__)
+    app.setApplicationName("Enviar imágenes")
 
-    img_list = dict()
-    for filepath in files:
-        p = productos[get_code(filepath)]
-        if not p.image_principal:
-            p.image_principal = str(filepath)
-        else:
-            pos = get_position(filepath)
-            img_list[pos] = filepath
-            keys = [k for k in img_list.keys()].sort()
-            for key in keys:
-                p.image_list.append(str(img_list[key]))
+    window = MainWindow()
+    window.show()  # IMPORTANT!!!!! Windows are hidden by default.
 
-    try:
-        for product in productos.values():
-            print(product.barcode)
-            product.update()
-
-    except Exception as e:
-        print(e)
-
+    sys.exit(app.exec())
