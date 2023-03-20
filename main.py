@@ -11,9 +11,7 @@ from PyQt6.QtCore import QObject
 
 from app.gui.window.main import MainWindow
 
-
 __version__ = "0.0.3"
-
 
 if __name__ == "__main__":
     # Start the app

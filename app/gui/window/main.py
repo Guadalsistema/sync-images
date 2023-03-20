@@ -7,8 +7,6 @@ from PyQt6.QtWidgets import (
         QLineEdit,
         QTextEdit)
 from PyQt6.QtCore import QObject
-
-from ...service.odoo import Product
 from ...controller.xmlrpc import Connection
 from ...utils import send_image_list
 
