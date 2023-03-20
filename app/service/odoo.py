@@ -1,16 +1,5 @@
 #!/bin/env python
 import base64
-import re
-from pathlib import Path
-
-def get_code(pathfile: Path):
-    name = pathfile.stem
-
-    group = re.split(r'[_-]+', name)
-    if len(group) > 1:
-        group = group[0]
-
-    return ''.join(group)
 
 
 def path_to_base64(image_path):
@@ -19,12 +8,13 @@ def path_to_base64(image_path):
 
 
 class Product:
-    barcode: str
+    code: str
     image_principal: str | None = None
+    image_list: list = []
 
-    def __init__(self, conn, barcode: str):
+    def __init__(self, conn, code: str):
         self.conn = conn
-        self.barcode = barcode
+        self.code = code
         self.image_list = []
 
     def update(self):
@@ -36,16 +26,14 @@ class Product:
                              "search",
                              [
                                 '|',
-                                ["barcode", '=', self.barcode],
-                                ["default_code", '=', self.barcode],
-                                ['image_1920', '=', False],
-                                ['active', '=', True]
+                                ["barcode", '=', self.code],
+                                ["default_code", '=', self.code],
+                                ['image_1920', '=', False]
                              ])
         if found:
             self.conn.write("product.template",
                          [found[0], {
                              "image_1920": path_to_base64(self.image_principal),
-                       #      "categ_id": categ._id
                              }])
 
         if found and self.image_list:

@@ -7,9 +7,9 @@
 import sys
 
 from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import QObject
 
 from app.gui.window.main import MainWindow
-
 
 
 __version__ = "0.0.3"
@@ -17,9 +17,10 @@ __version__ = "0.0.3"
 
 if __name__ == "__main__":
     # Start the app
+    tr = QObject.tr
     app = QApplication(sys.argv)
     app.setApplicationVersion(__version__)
-    app.setApplicationName("Enviar imágenes")
+    app.setApplicationName(tr("Enviar imágenes"))
 
     window = MainWindow()
     window.show()  # Windows are hidden by default.
